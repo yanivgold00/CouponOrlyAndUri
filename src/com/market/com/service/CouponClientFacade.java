@@ -51,20 +51,26 @@ public class CouponClientFacade {
 			SQLHandler.connect2DB();
 			String temp_pass = "";
 			try {
-				temp_pass =SQLHandler.run_query("SELECT PASSWORD FROM customer WHERE CUST_NAME=" + name).getString(1);
+				ResultSet res = SQLHandler.run_query("SELECT PASSWORD FROM customer WHERE CUST_NAME=\"" + name+"\"");
+				res.next();
+				temp_pass =res.getString(1);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if(temp_pass == pass) {
-				ResultSet cust= SQLHandler.run_query("SELECT * FROM customer WHERE CUST_NAME=" + name);
+			if(temp_pass.equals(pass)) {
+				ResultSet cust= SQLHandler.run_query("SELECT * FROM customer WHERE CUST_NAME=\"" + name+"\"");
 				try {
+					cust.next();
 					Customer customer = new Customer(cust.getString("ID"), cust.getString("CUST_NAME"), cust.getString("PASSWORD"), null);
 					return new CustomerFacade(customer);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}	
+			}
+			else {
+				System.out.println(pass + "wrong pass "+temp_pass);
 			}
 		}
 		return null;

@@ -80,7 +80,13 @@ public class AdminFacade extends CouponClientFacade {
 	
 	//TODO add body
 	public void createCustomer(Customer customer) {
-
+		String stmt = "INSERT INTO customer (ID, CUST_NAME, PASSWORD) VALUES (\"" + customer.getId() + "\", \"" + customer.getCustName() + "\", \"" + customer.getPassword() + "\")";
+		try {
+			SQLHandler.add(stmt);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void removeCustomer(Customer customer) {
@@ -89,19 +95,54 @@ public class AdminFacade extends CouponClientFacade {
 	
 	//TODO add body
 	public void updateCustomer(Customer customer) {
-
+		String stmt = "UPDATE customer SET CUST_NAME = \"" + customer.getCustName() + "\", PASSWORD = \"" 
+				+ customer.getPassword() + "\" WHERE ID=\"" + customer.getId() + "\"";
+					try {
+						SQLHandler.add(stmt);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 	}
 	
 	
-	//TODO add body
-//	public Customer getCustomer(String id) {
-//		
-//	}
+	public Customer getCustomer(String id) {
+		ResultSet cust = SQLHandler.run_query("SELECT * FROM customer WHERE ID=" + id);
+		try {
+			cust.next();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Customer customer = null;
+		try {
+			customer = new Customer(cust.getString("ID"), cust.getString("CUST_NAME"), cust.getString("PASSWORD"), new ArrayList());
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return customer;
+	}
 	
 	//TODO add body
-//	public Collection<Customer> getAllCustomers() {
-//		
-//	}
+	public Collection<Customer> getAllCustomers() {
+		ResultSet cust= SQLHandler.run_query("SELECT * FROM customer;");
+		ArrayList<Customer> customer = new ArrayList();
+		try {
+			while(cust.next()) {
+				customer.add(new Customer(cust.getString("ID"), cust.getString("CUST_NAME"), cust.getString("PASSWORD"), new ArrayList()));
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return customer;
+		
+	}
+	
+
 
 
 }
